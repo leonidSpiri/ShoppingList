@@ -1,7 +1,7 @@
 package spiridonov.shoppinglist.domain
 
-class DeleteShopItemUseCase {
-    fun deleteShopItem(shopItem: ShopItem){
-
+class DeleteShopItemUseCase(private val shopListRepository: ShopListRepository) {
+    fun deleteShopItem(shopItem: ShopItem) {
+        shopListRepository.deleteShopItem(shopItem)
     }
 }
