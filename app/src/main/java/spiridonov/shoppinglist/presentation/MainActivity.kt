@@ -14,12 +14,16 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         viewModel = ViewModelProvider(this)[MainViewModel::class.java]
-        var list:List<ShopItem> = emptyList()
+        var list: List<ShopItem>
         viewModel.shopList.observe(this){
             Log.d("MainActivityTest", it.toString())
-            viewModel.deleteShopItem(it[0])
-            Log.d("MainActivityTest", it.toString())
+            list = viewModel.shopList.value!!
         }
         viewModel.getShopList()
+        list = viewModel.shopList.value!!
+        viewModel.deleteShopItem(list[0])
+        list = viewModel.shopList.value!!
+        viewModel.changeEnableState(list[0])
+
     }
 }
