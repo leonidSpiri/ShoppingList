@@ -2,11 +2,24 @@ package spiridonov.shoppinglist.presentation
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
+import androidx.lifecycle.ViewModelProvider
 import spiridonov.shoppinglist.R
+import spiridonov.shoppinglist.domain.ShopItem
 
 class MainActivity : AppCompatActivity() {
+    private lateinit var viewModel: MainViewModel
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        viewModel = ViewModelProvider(this)[MainViewModel::class.java]
+        var list:List<ShopItem> = emptyList()
+        viewModel.shopList.observe(this){
+            Log.d("MainActivityTest", it.toString())
+            viewModel.deleteShopItem(it[0])
+            Log.d("MainActivityTest", it.toString())
+        }
+        viewModel.getShopList()
     }
 }
