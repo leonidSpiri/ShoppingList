@@ -1,6 +1,5 @@
 package spiridonov.shoppinglist.presentation
 
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import spiridonov.shoppinglist.data.ShopListRepositoryImpl
 import spiridonov.shoppinglist.domain.DeleteShopItemUseCase
@@ -14,21 +13,14 @@ class MainViewModel : ViewModel() {
     private val deleteShopItemUseCase = DeleteShopItemUseCase(repository)
     private val editShopItemUseCase = EditShopItemUseCase(repository)
 
-    val shopList = MutableLiveData<List<ShopItem>>()
+    val shopList = getShopListUseCase.getShopList()
 
-    fun getShopList(){
-        val list = getShopListUseCase.getShopList()
-        shopList.value = list
+    fun deleteShopItem(shopItem: ShopItem) {
+        deleteShopItemUseCase.deleteShopItem(shopItem)
     }
 
-    fun deleteShopItem(shopItem: ShopItem){
-     deleteShopItemUseCase.deleteShopItem(shopItem)
-        getShopList()
-    }
-
-    fun changeEnableState(shopItem: ShopItem){
+    fun changeEnableState(shopItem: ShopItem) {
         val newItem = shopItem.copy(isEnabled = !shopItem.isEnabled)
         editShopItemUseCase.editShopItem(newItem)
-        getShopList()
     }
 }
