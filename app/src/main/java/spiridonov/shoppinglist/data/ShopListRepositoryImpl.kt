@@ -7,7 +7,7 @@ import spiridonov.shoppinglist.domain.ShopListRepository
 import kotlin.random.Random
 
 object ShopListRepositoryImpl : ShopListRepository {
-    private val shopList = sortedSetOf<ShopItem>({o1, o2 -> o1.id.compareTo(o2.id)})
+    private val shopList = sortedSetOf<ShopItem>({ o1, o2 -> o1.id.compareTo(o2.id) })
     private val shopListLiveData = MutableLiveData<List<ShopItem>>()
     private var autoIncId = 0
 
