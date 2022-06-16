@@ -5,4 +5,6 @@
     <string name="hint_name">name</string>
     <string name="hint_count">count</string>
     <string name="btn_save">Save</string>
+    <string name="error_input_count">Ошибка при вводе числа</string>
+    <string name="error_input_name">Ошибка при вводе названия</string>
 </resources>
