@@ -1,6 +1,7 @@
 package spiridonov.shoppinglist.presentation
 
 import android.os.Bundle
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentContainerView
@@ -10,7 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import spiridonov.shoppinglist.R
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinished {
     private lateinit var viewModel: MainViewModel
     private lateinit var shopListAdapter: ShopListAdapter
     private var shopItemContainer: FragmentContainerView? = null
@@ -27,14 +28,19 @@ class MainActivity : AppCompatActivity() {
         if (!isOnePaneMode()) launchFragment(ShopItemFragment.newInstanceAddItem())
         val btnAddItem = findViewById<FloatingActionButton>(R.id.btn_add_shop_item)
         btnAddItem.setOnClickListener {
-            if (!isOnePaneMode()) launchFragment(ShopItemFragment.newInstanceAddItem())
-            else {
+            if (!isOnePaneMode()) {
+                launchFragment(ShopItemFragment.newInstanceAddItem())
+            } else {
                 val intent = ShopItemActivity.newIntentAddItem(this)
                 startActivity(intent)
             }
         }
     }
 
+    override fun onEditingFinished() {
+        Toast.makeText(this@MainActivity, "Success", Toast.LENGTH_SHORT).show()
+        supportFragmentManager.popBackStack()
+    }
 
     private fun setupRecycleView() {
         val rvShopList = findViewById<RecyclerView>(R.id.rv_shop_list)

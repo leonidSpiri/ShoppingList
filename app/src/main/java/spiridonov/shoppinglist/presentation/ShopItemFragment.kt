@@ -1,6 +1,7 @@
 package spiridonov.shoppinglist.presentation
 
 
+import android.content.Context
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -22,6 +23,7 @@ class ShopItemFragment : Fragment() {
     private lateinit var etCount: EditText
     private lateinit var btnSave: Button
     private lateinit var viewModel: ShopItemViewModel
+    private lateinit var onEditingFinishedListener: OnEditingFinished
 
     private var screenMode: String = MODE_UNKNOWN
     private var shopItemId: Int = ShopItem.UNDEFINED_ID
@@ -29,6 +31,12 @@ class ShopItemFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         parseParams()
+    }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        if(context is OnEditingFinished) onEditingFinishedListener = context
+        else throw RuntimeException("Activity must implement listener onEditingFinishedListener")
     }
 
     override fun onCreateView(
@@ -58,7 +66,7 @@ class ShopItemFragment : Fragment() {
             tilName.error = message
         }
         viewModel.shouldCloseScreen.observe(viewLifecycleOwner) {
-            activity?.onBackPressed()
+            onEditingFinishedListener.onEditingFinished()
         }
     }
 
@@ -136,6 +144,10 @@ class ShopItemFragment : Fragment() {
         etName = view.findViewById(R.id.et_name)
         etCount = view.findViewById(R.id.et_count)
         btnSave = view.findViewById(R.id.btn_save)
+    }
+
+    interface OnEditingFinished{
+        fun onEditingFinished()
     }
 
     companion object {
