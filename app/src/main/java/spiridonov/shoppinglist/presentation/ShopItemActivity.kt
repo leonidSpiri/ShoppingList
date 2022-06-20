@@ -19,10 +19,12 @@ class ShopItemActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinished
         if (savedInstanceState == null)
             launchRightMode()
     }
+
     override fun onEditingFinished() {
         Toast.makeText(this, "Success", Toast.LENGTH_SHORT).show()
         finish()
     }
+
     private fun parseIntent() {
         if (!intent.hasExtra(EXTRA_SCREEN_MODE)) throw RuntimeException("Param screen mode is absent")
 

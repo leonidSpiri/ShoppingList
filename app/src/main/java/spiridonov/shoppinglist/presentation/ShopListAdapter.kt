@@ -2,8 +2,12 @@ package spiridonov.shoppinglist.presentation
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.databinding.DataBindingUtil
+import androidx.databinding.ViewDataBinding
 import androidx.recyclerview.widget.ListAdapter
 import spiridonov.shoppinglist.R
+import spiridonov.shoppinglist.databinding.ItemShopDisabledBinding
+import spiridonov.shoppinglist.databinding.ItemShopEnabledBinding
 import spiridonov.shoppinglist.domain.ShopItem
 
 class ShopListAdapter : ListAdapter<ShopItem, ShopItemViewHolder>(ShopItemDiffCallback()) {
@@ -18,10 +22,13 @@ class ShopListAdapter : ListAdapter<ShopItem, ShopItemViewHolder>(ShopItemDiffCa
                 SHOP_ITEM_DISABLED -> R.layout.item_shop_disabled
                 else -> throw RuntimeException("Unknown view type: $viewType")
             }
-        return ShopItemViewHolder(
-            LayoutInflater.from(parent.context)
-                .inflate(layoutID, parent, false)
+        val binding = DataBindingUtil.inflate<ViewDataBinding>(
+            LayoutInflater.from(parent.context),
+            layoutID,
+            parent,
+            false
         )
+        return ShopItemViewHolder(binding)
     }
 
     override fun getItemViewType(position: Int): Int =
@@ -31,14 +38,21 @@ class ShopListAdapter : ListAdapter<ShopItem, ShopItemViewHolder>(ShopItemDiffCa
 
     override fun onBindViewHolder(holder: ShopItemViewHolder, position: Int) {
         val shopItem = getItem(position)
-        with(holder) {
-            txtName.text = shopItem.name
-            txtCount.text = shopItem.count.toString()
-            view.setOnLongClickListener {
+        val binding = holder.binding
+        when (binding) {
+            is ItemShopDisabledBinding -> {
+                binding.shopItem = shopItem
+            }
+            is ItemShopEnabledBinding -> {
+                binding.shopItem = shopItem
+            }
+        }
+        with(binding.root) {
+            setOnLongClickListener {
                 onShopItemLongClickListener?.invoke(shopItem)
                 true
             }
-            view.setOnClickListener {
+            setOnClickListener {
                 onShopItemClickListener?.invoke(shopItem)
             }
         }
