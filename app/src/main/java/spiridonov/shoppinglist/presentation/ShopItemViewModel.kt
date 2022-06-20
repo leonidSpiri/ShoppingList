@@ -1,5 +1,7 @@
 package spiridonov.shoppinglist.presentation
 
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -9,11 +11,12 @@ import spiridonov.shoppinglist.domain.EditShopItemUseCase
 import spiridonov.shoppinglist.domain.GetShopItemUseCase
 import spiridonov.shoppinglist.domain.ShopItem
 
-class ShopItemViewModel : ViewModel() {
-    private val repository = ShopListRepositoryImpl
+class ShopItemViewModel(application: Application) : AndroidViewModel(application) {
+    private val repository = ShopListRepositoryImpl(application)
     private val editShopItemUseCase = EditShopItemUseCase(repository)
     private val addShopListUseCase = AddShopItemUseCase(repository)
     private val getShopItemUseCase = GetShopItemUseCase(repository)
+    // private val scope  = CoroutineScope(Dispatchers.IO)
 
     private val _errorInputName = MutableLiveData<Boolean>()
     val errorInputName: LiveData<Boolean>
@@ -32,8 +35,11 @@ class ShopItemViewModel : ViewModel() {
         get() = _shouldCloseScreen
 
     fun getShopItem(shopItemId: Int) {
+        //  scope.launch {
         val shopItem = getShopItemUseCase.getShopItem(shopItemId)
         _shopItem.value = shopItem
+        // }
+
     }
 
     fun addShopItem(inputName: String?, inputCount: String?) {
@@ -41,9 +47,11 @@ class ShopItemViewModel : ViewModel() {
         val count = parseInt(inputCount)
         val fieldsValid = validateInput(name, count)
         if (fieldsValid) {
+            //    scope.launch{
             val shopItem = ShopItem(name, count, true)
             addShopListUseCase.addShopItem(shopItem)
             finishWork()
+            //   }
         }
     }
 
@@ -53,9 +61,11 @@ class ShopItemViewModel : ViewModel() {
         val fieldsValid = validateInput(name, count)
         if (fieldsValid) {
             _shopItem.value?.let {
+                //    scope.launch {
                 val newItem = it.copy(name = name, count = count)
                 editShopItemUseCase.editShopItem(newItem)
                 finishWork()
+                // }
             }
         }
     }
@@ -90,5 +100,10 @@ class ShopItemViewModel : ViewModel() {
 
     private fun finishWork() {
         _shouldCloseScreen.value = Unit
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        //scope.cancel()
     }
 }
