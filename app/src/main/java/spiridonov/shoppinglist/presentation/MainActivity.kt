@@ -1,5 +1,6 @@
 package spiridonov.shoppinglist.presentation
 
+import android.net.Uri
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -8,19 +9,30 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import spiridonov.shoppinglist.R
+import spiridonov.shoppinglist.ShopApp
 import spiridonov.shoppinglist.databinding.ActivityMainBinding
+import javax.inject.Inject
 
 class MainActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinished {
-    private lateinit var viewModel: MainViewModel
     private lateinit var shopListAdapter: ShopListAdapter
     private lateinit var binding: ActivityMainBinding
+
+    @Inject
+    lateinit var viewModelFactory: ViewModelFactory
+    private lateinit var viewModel: MainViewModel
+
+    private val component by lazy {
+        (application as ShopApp).component
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
+        component.inject(this)
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         isOnePaneMode()
         setupRecycleView()
-        viewModel = ViewModelProvider(this)[MainViewModel::class.java]
+        viewModel = ViewModelProvider(this, viewModelFactory)[MainViewModel::class.java]
         viewModel.shopList.observe(this) {
             shopListAdapter.submitList(it)
         }
@@ -33,6 +45,15 @@ class MainActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinished {
                 startActivity(intent)
             }
         }
+
+        contentResolver.query(
+            Uri.parse("content://spiridonov.shoppinglist/shop_items/2"),
+            null,
+            null,
+            null,
+            null,
+            null
+        )
     }
 
     override fun onEditingFinished() {
