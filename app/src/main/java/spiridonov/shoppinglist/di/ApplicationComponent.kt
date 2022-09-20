@@ -4,6 +4,7 @@ import android.app.Application
 import dagger.BindsInstance
 import dagger.Component
 import spiridonov.shoppinglist.ShopApp
+import spiridonov.shoppinglist.data.ShopListProvider
 import spiridonov.shoppinglist.presentation.MainActivity
 import spiridonov.shoppinglist.presentation.ShopItemFragment
 
@@ -18,6 +19,7 @@ interface ApplicationComponent {
     fun inject(activity: MainActivity)
     fun inject(fragment: ShopItemFragment)
     fun inject(application: ShopApp)
+    fun inject(provider: ShopListProvider)
 
     @Component.Factory
     interface Factory {
