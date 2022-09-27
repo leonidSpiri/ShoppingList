@@ -1,6 +1,8 @@
 package spiridonov.shoppinglist.presentation
 
+import android.content.ContentValues
 import android.content.Context
+import android.net.Uri
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -13,6 +15,7 @@ import spiridonov.shoppinglist.ShopApp
 import spiridonov.shoppinglist.databinding.FragmentShopItemBinding
 import spiridonov.shoppinglist.domain.ShopItem
 import javax.inject.Inject
+import kotlin.concurrent.thread
 
 class ShopItemFragment : Fragment() {
 

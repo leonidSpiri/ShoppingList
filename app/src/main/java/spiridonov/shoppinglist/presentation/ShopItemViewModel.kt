@@ -1,5 +1,8 @@
 package spiridonov.shoppinglist.presentation
 
+import android.app.Application
+import android.content.ContentValues
+import android.net.Uri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -10,8 +13,10 @@ import spiridonov.shoppinglist.domain.EditShopItemUseCase
 import spiridonov.shoppinglist.domain.GetShopItemUseCase
 import spiridonov.shoppinglist.domain.ShopItem
 import javax.inject.Inject
+import kotlin.concurrent.thread
 
 class ShopItemViewModel @Inject constructor(
+    private val application: Application,
     private val editShopItemUseCase: EditShopItemUseCase,
     private val addShopListUseCase: AddShopItemUseCase,
     private val getShopItemUseCase: GetShopItemUseCase
@@ -46,8 +51,19 @@ class ShopItemViewModel @Inject constructor(
         val fieldsValid = validateInput(name, count)
         if (fieldsValid) {
             viewModelScope.launch {
-                val shopItem = ShopItem(name, count, true)
-                addShopListUseCase.addShopItem(shopItem)
+                thread {
+                    application.contentResolver?.insert(
+                        Uri.parse("content://spiridonov.shoppinglist/shop_items"),
+                        ContentValues().apply {
+                            put("id", 0)
+                            put("name", name)
+                            put("count", count)
+                            put("isEnabled", true)
+                        }
+                    )
+                }
+                //val shopItem = ShopItem(name, count, true)
+                // addShopListUseCase.addShopItem(shopItem)
                 finishWork()
             }
         }

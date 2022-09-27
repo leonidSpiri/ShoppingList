@@ -6,11 +6,15 @@ import android.content.UriMatcher
 import android.database.Cursor
 import android.net.Uri
 import spiridonov.shoppinglist.ShopApp
+import spiridonov.shoppinglist.domain.ShopItem
 import javax.inject.Inject
 
 class ShopListProvider : ContentProvider() {
     @Inject
     lateinit var shopListDao: ShopListDao
+
+    @Inject
+    lateinit var mapper: ShopListMapper
 
     private val component by lazy {
         (context as ShopApp).component
@@ -49,11 +53,33 @@ class ShopListProvider : ContentProvider() {
     }
 
     override fun insert(p0: Uri, p1: ContentValues?): Uri? {
-        TODO("Not yet implemented")
+        when (uriMatcher.match(p0)) {
+            GET_SHOP_ITEMS_QUERY -> {
+                if (p1 == null) return null
+                val id = p1.getAsInteger("id")
+                val name = p1.getAsString("name")
+                val count = p1.getAsInteger("count")
+                val enabled = p1.getAsBoolean("isEnabled")
+                val shopItem = ShopItem(
+                    id = id,
+                    name = name,
+                    count = count,
+                    isEnabled = enabled
+                )
+                shopListDao.addShopItemSync(mapper.mapEntityToDbModel(shopItem))
+            }
+        }
+        return null
     }
 
     override fun delete(p0: Uri, p1: String?, p2: Array<out String>?): Int {
-        TODO("Not yet implemented")
+        when (uriMatcher.match(p0)) {
+            GET_SHOP_ITEMS_QUERY -> {
+                val id = p2?.get(0)?.toInt() ?: -1
+                return shopListDao.deleteShopItemSync(id)
+            }
+        }
+        return 0
     }
 
     override fun update(p0: Uri, p1: ContentValues?, p2: String?, p3: Array<out String>?): Int {
