@@ -1,7 +1,7 @@
 package spiridonov.shoppinglist.data
 
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.Transformations
+import androidx.lifecycle.map
 import spiridonov.shoppinglist.domain.ShopItem
 import spiridonov.shoppinglist.domain.ShopListRepository
 import javax.inject.Inject
@@ -28,9 +28,8 @@ class ShopListRepositoryImpl @Inject constructor(
         return mapper.mapDbModelToEntity(dbModel)
     }
 
-    override fun getShopList(): LiveData<List<ShopItem>> = Transformations.map(
-        shopListDao.getShopList()
-    ) {
-        mapper.mapListDbModelToListEntity(it)
-    }
+    override fun getShopList(): LiveData<List<ShopItem>> =
+        shopListDao.getShopList().map {
+            mapper.mapListDbModelToListEntity(it)
+        }
 }
